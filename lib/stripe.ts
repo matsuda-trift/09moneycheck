@@ -5,11 +5,15 @@
 
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set');
-}
+export function getStripe(): Stripe {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-09-30.clover',
-  typescript: true,
-});
+  if (!secretKey) {
+    throw new Error('STRIPE_SECRET_KEY is not set');
+  }
+
+  return new Stripe(secretKey, {
+    apiVersion: '2025-09-30.clover',
+    typescript: true,
+  });
+}
