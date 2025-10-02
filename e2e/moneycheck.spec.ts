@@ -8,14 +8,14 @@ import { test, expect } from '@playwright/test';
 test.describe('MoneyCheck E2E Test', () => {
   test.beforeEach(async ({ page }) => {
     // セッションストレージをクリア
-    await page.goto('http://localhost:3000');
+    await page.goto('/');
     await page.evaluate(() => sessionStorage.clear());
   });
 
   test('完全な入力フローと診断結果表示', async ({ page }) => {
     // ステップ1: トップページ確認
-    await page.goto('http://localhost:3000');
-    await expect(page).toHaveURL('http://localhost:3000/');
+    await page.goto('/');
+    await expect(page).toHaveURL('/');
 
     // ページタイトルが表示されることを確認
     await expect(page.locator('h1')).toBeVisible();
@@ -168,7 +168,7 @@ test.describe('MoneyCheck E2E Test', () => {
   });
 
   test('バリデーション: 空欄入力エラー', async ({ page }) => {
-    await page.goto('http://localhost:3000/input/labor-income');
+    await page.goto('/input/labor-income');
 
     // 空欄のまま次へボタンをクリック
     const nextButton = page.locator('button').filter({ hasText: /次へ|進む|次|次の入力/i }).first();
@@ -191,7 +191,7 @@ test.describe('MoneyCheck E2E Test', () => {
   });
 
   test('バリデーション: 非数値入力エラー', async ({ page }) => {
-    await page.goto('http://localhost:3000/input/labor-income');
+    await page.goto('/input/labor-income');
 
     // 非数値を入力
     const input = page.locator('input[type="text"]').first();
@@ -206,7 +206,7 @@ test.describe('MoneyCheck E2E Test', () => {
   });
 
   test('バリデーション: 負数入力エラー', async ({ page }) => {
-    await page.goto('http://localhost:3000/input/fixed-cost');
+    await page.goto('/input/fixed-cost');
 
     // 負数を入力
     const input = page.locator('input[type="text"]').first();
@@ -221,7 +221,7 @@ test.describe('MoneyCheck E2E Test', () => {
   });
 
   test('バリデーション: 0円入力は許可される', async ({ page }) => {
-    await page.goto('http://localhost:3000/input/passive-income');
+    await page.goto('/input/passive-income');
 
     // 0を入力
     const input = page.locator('input[type="text"]').first();
@@ -236,7 +236,7 @@ test.describe('MoneyCheck E2E Test', () => {
 
   test('ナビゲーション: 戻るボタンで前ページに戻る', async ({ page }) => {
     // 労働収入ページから開始
-    await page.goto('http://localhost:3000/input/labor-income');
+    await page.goto('/input/labor-income');
 
     const input1 = page.locator('input[type="text"]').first();
     await input1.fill('300000');
@@ -260,7 +260,7 @@ test.describe('MoneyCheck E2E Test', () => {
   });
 
   test('sessionStorage: ページリロード後もデータが保持される', async ({ page }) => {
-    await page.goto('http://localhost:3000/input/labor-income');
+    await page.goto('/input/labor-income');
 
     // データを入力
     const input = page.locator('input[type="text"]').first();
@@ -294,7 +294,7 @@ test.describe('MoneyCheck E2E Test', () => {
     ];
 
     for (const pagePath of pages) {
-      await page.goto(`http://localhost:3000${pagePath}`);
+      await page.goto(pagePath);
 
       // フッターが存在することを確認
       const footer = page.locator('footer, [role="contentinfo"]').first();
@@ -318,14 +318,14 @@ test.describe('MoneyCheck E2E Test', () => {
     ];
 
     for (const { path, step } of steps) {
-      await page.goto(`http://localhost:3000${path}`);
+      await page.goto(path);
       await expect(page.locator('text=/ステップ/i')).toContainText(`ステップ ${step} / 7`);
     }
   });
 
   test('診断結果: 正確なスコア計算', async ({ page }) => {
     // 特定のデータで診断を実行
-    await page.goto('http://localhost:3000');
+    await page.goto('/');
 
     // セッションストレージに直接データを設定
     await page.evaluate(() => {
@@ -342,7 +342,7 @@ test.describe('MoneyCheck E2E Test', () => {
     });
 
     // 無料診断結果ページに直接アクセス
-    await page.goto('http://localhost:3000/result/free');
+    await page.goto('/result/free');
 
     // スコアとランクが表示されることを確認（複数マッチする場合は.first()を使用）
     await expect(page.locator('text=/点|スコア/i').first()).toBeVisible();
