@@ -35,7 +35,9 @@
 	 */
 	"vars": {
 		"APP_NAME": "MoneyCheck",
-		"NODE_ENV": "production"
+		"NODE_ENV": "production",
+		"NEXT_PUBLIC_URL": "https://09moneycheck.09matsu19.workers.dev",
+		"NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51SDJyURlOPDR7TS84OmcfNK8Yx0PMnqdWzSaOi3AtkgMkDx5ez7y3xbjGKx3cSk3D3C3XOYFvkzIDGbVWAcilbS700BffWWqVe"
 	}
 	/**
 	 * Note: Use secrets to store sensitive data.
