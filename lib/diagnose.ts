@@ -1,9 +1,9 @@
 // 位置: lib/diagnose.ts
-// 機能: キャッシュフロー診断ロジック
-// 理由: 入力データから総合スコアとランクを計算
+// 機能: キャッシュフロー診断ロジックおよび経済的自由計算
+// 理由: 入力データから総合スコア・ランク・経済的自由までの期間を計算
 // 関連: types/index.ts, app/result/free/page.tsx, app/result/premium/page.tsx
 
-import { MoneyCheckData, DiagnoseResult, Rank } from '@/types';
+import { MoneyCheckData, DiagnoseResult, Rank, TimeToFreedom } from '@/types';
 
 /**
  * 総収入と総支出を計算
@@ -162,5 +162,89 @@ export function diagnose(data: MoneyCheckData): DiagnoseResult {
     rank,
     breakdown,
     ratios,
+  };
+}
+
+/**
+ * 経済的自由までの道のりを計算
+ * @param data ユーザー入力データ
+ * @returns 経済的自由までの期間と詳細
+ */
+export function calculateTimeToFreedom(data: MoneyCheckData): TimeToFreedom {
+  const totalIncome = data.laborIncome + data.passiveIncome;
+  const totalExpense = data.fixedCost + data.waste + data.selfInvestment;
+  const monthlySavings = totalIncome - totalExpense;
+  const monthlyLivingCost = data.fixedCost + data.waste + data.selfInvestment;
+
+  // ========== 道1: 受動収入ルート ==========
+  const requiredPassiveIncome = monthlyLivingCost;
+  const passiveIncomeGap = requiredPassiveIncome - data.passiveIncome;
+
+  let route1Years = 0;
+  let route1Months = 0;
+  let route1Achievable = false;
+  let route1Message = '';
+
+  if (data.passiveIncome >= requiredPassiveIncome) {
+    route1Message = 'すでに達成！';
+    route1Achievable = true;
+  } else {
+    route1Message = `あと月${passiveIncomeGap.toLocaleString()}円の受動収入が必要`;
+    route1Achievable = true;
+  }
+
+  // ========== 道2: 資産運用ルート ==========
+  const requiredAsset = monthlyLivingCost * 12 * 20;
+  const assetGap = requiredAsset - data.asset;
+
+  let route2Years = 0;
+  let route2Months = 0;
+  let route2Achievable = false;
+  let route2Message = '';
+
+  if (data.asset >= requiredAsset) {
+    route2Message = 'すでに達成！';
+    route2Achievable = true;
+  } else if (monthlySavings <= 0) {
+    route2Message = '収支改善が必要';
+    route2Achievable = false;
+  } else {
+    const requiredMonths = Math.ceil(assetGap / monthlySavings);
+    route2Years = Math.floor(requiredMonths / 12);
+    route2Months = requiredMonths % 12;
+    route2Message = `${route2Years}年${route2Months}ヶ月`;
+    route2Achievable = true;
+  }
+
+  // どちらが早いか判定
+  let fasterRoute: 1 | 2 | null = null;
+  if (route1Achievable && route2Achievable) {
+    if (data.passiveIncome >= requiredPassiveIncome) {
+      fasterRoute = 1;
+    } else if (data.asset >= requiredAsset) {
+      fasterRoute = 2;
+    } else if (route2Years > 0 || route2Months > 0) {
+      fasterRoute = 2;
+    }
+  }
+
+  return {
+    route1: {
+      achievable: route1Achievable,
+      years: route1Years,
+      months: route1Months,
+      currentPassiveIncome: data.passiveIncome,
+      requiredPassiveIncome,
+      message: route1Message,
+    },
+    route2: {
+      achievable: route2Achievable,
+      years: route2Years,
+      months: route2Months,
+      currentAsset: data.asset,
+      requiredAsset,
+      message: route2Message,
+    },
+    fasterRoute,
   };
 }

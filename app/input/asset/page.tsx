@@ -47,7 +47,7 @@ export default function AssetPage() {
         <InputForm
           title="資産"
           description="現金、預金、株式、投資信託、不動産など、現在保有している資産の合計額を入力してください。"
-          placeholder="例: 1000000"
+          placeholder="例: 200,000"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

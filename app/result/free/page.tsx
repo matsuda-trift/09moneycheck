@@ -8,18 +8,23 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getData } from '@/lib/sessionStorage';
-import { diagnose } from '@/lib/diagnose';
-import { DiagnoseResult } from '@/types';
+import { diagnose, calculateTimeToFreedom } from '@/lib/diagnose';
+import { DiagnoseResult, MoneyCheckData, TimeToFreedom } from '@/types';
 
 export default function FreeResultPage() {
   const router = useRouter();
   const [result, setResult] = useState<DiagnoseResult | null>(null);
+  const [data, setData] = useState<MoneyCheckData | null>(null);
+  const [timeToFreedom, setTimeToFreedom] = useState<TimeToFreedom | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const data = getData();
-    const diagnoseResult = diagnose(data);
+    const inputData = getData();
+    const diagnoseResult = diagnose(inputData);
+    const freedomData = calculateTimeToFreedom(inputData);
+    setData(inputData);
     setResult(diagnoseResult);
+    setTimeToFreedom(freedomData);
     setIsLoaded(true);
   }, []);
 
@@ -91,6 +96,52 @@ export default function FreeResultPage() {
             />
           </div>
         </div>
+
+        {/* 経済的自由への道 */}
+        {timeToFreedom && (
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+              💰 経済的自由への道
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* 道1: 受動収入ルート */}
+              <div className="bg-white rounded-lg p-6 border-2 border-blue-300">
+                <h3 className="text-lg font-bold text-blue-900 mb-3">
+                  道1: 受動収入を増やす
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>現在の受動収入: <span className="font-semibold">{timeToFreedom.route1.currentPassiveIncome.toLocaleString()}円/月</span></p>
+                  <p>必要な受動収入: <span className="font-semibold">{timeToFreedom.route1.requiredPassiveIncome.toLocaleString()}円/月</span></p>
+                  <p className="text-lg font-bold text-blue-900 mt-3">
+                    {timeToFreedom.route1.message}
+                  </p>
+                </div>
+              </div>
+
+              {/* 道2: 資産運用ルート */}
+              <div className="bg-white rounded-lg p-6 border-2 border-purple-300">
+                <h3 className="text-lg font-bold text-purple-900 mb-3">
+                  道2: 資産を貯める（年利5%想定）
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>現在の資産: <span className="font-semibold">{timeToFreedom.route2.currentAsset.toLocaleString()}円</span></p>
+                  <p>必要な資産: <span className="font-semibold">{timeToFreedom.route2.requiredAsset.toLocaleString()}円</span></p>
+                  <p className="text-lg font-bold text-purple-900 mt-3">
+                    {timeToFreedom.route2.message}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-300">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                ※ これは一般的な試算例です。特定の投資方法を推奨するものではありません。
+                実際の達成期間は個人の状況により異なります。
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* プレミアム版案内 */}
         <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-6">

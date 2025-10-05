@@ -14,7 +14,59 @@ export default function Footer() {
             金融商品の販売・勧誘、投資助言を行うものではありません。
             診断結果は参考情報としてご利用ください。
           </p>
+          <p className="leading-relaxed mt-2">
+            「年利5%で運用」は一般的な試算例であり、
+            特定の投資方法を推奨するものではありません。
+          </p>
         </div>
+
+        <div className="mt-6 pt-4 border-t border-gray-800">
+          <div className="text-center mb-3">
+            <p className="text-gray-400 mb-2">運営: Trift</p>
+            <div className="flex flex-wrap justify-center gap-3 text-xs">
+              <a
+                href="https://www.trift3.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+                aria-label="利用規約（新しいタブで開きます）"
+              >
+                利用規約
+              </a>
+              <span className="text-gray-600">|</span>
+              <a
+                href="https://www.trift3.com/legal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+                aria-label="特定商取引法表記（新しいタブで開きます）"
+              >
+                特定商取引法表記
+              </a>
+              <span className="text-gray-600">|</span>
+              <a
+                href="https://www.trift3.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+                aria-label="プライバシーポリシー（新しいタブで開きます）"
+              >
+                プライバシーポリシー
+              </a>
+              <span className="text-gray-600">|</span>
+              <a
+                href="https://www.trift3.com/contact"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-400"
+                aria-label="お問い合わせ（新しいタブで開きます）"
+              >
+                お問い合わせ
+              </a>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-4 text-center text-gray-500 text-xs">
           © 2024 MoneyCheck. All rights reserved.
         </div>

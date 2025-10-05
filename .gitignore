@@ -44,3 +44,9 @@ next-env.d.ts
 !.dev.vars.example
 .env*
 !.env.example
+
+# MCP configuration (contains API keys)
+.mcp.json
+
+# Production setup guide (contains example keys)
+PRODUCTION_SETUP.md

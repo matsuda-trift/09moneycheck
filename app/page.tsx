@@ -34,7 +34,7 @@ export default function Home() {
 
         <Link
           href="/input/labor-income"
-          className="inline-block bg-blue-900 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl"
+          className="inline-block bg-blue-900 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
         >
           診断を始める
         </Link>

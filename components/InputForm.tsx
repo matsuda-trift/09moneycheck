@@ -13,9 +13,9 @@ interface InputFormProps {
   placeholder?: string;       // プレースホルダー
   initialValue?: number;      // 初期値
   onNext: (value: number) => void;  // 次へボタンのコールバック
-  onBack?: () => void;        // 戻るボタンのコールバック（任意）
+  onBack?: () => void;        // 戻るボタンのコールバック(任意)
   showBackButton?: boolean;   // 戻るボタンを表示するか
-  nextButtonText?: string;    // 次へボタンのテキスト（デフォルト: "次へ"）
+  nextButtonText?: string;    // 次へボタンのテキスト(デフォルト: "次へ")
 }
 
 export default function InputForm({
@@ -28,17 +28,35 @@ export default function InputForm({
   showBackButton = true,
   nextButtonText = '次へ',
 }: InputFormProps) {
-  const [value, setValue] = useState<string>(initialValue > 0 ? String(initialValue) : '');
+  // カンマ区切りフォーマット関数
+  const formatNumber = (numStr: string): string => {
+    const cleaned = numStr.replace(/,/g, '');
+    if (!cleaned) return '';
+    return Number(cleaned).toLocaleString('ja-JP');
+  };
+
+  // カンマを除去して数値に変換
+  const parseNumber = (formattedStr: string): number => {
+    return Number(formattedStr.replace(/,/g, ''));
+  };
+
+  // 初期値をカンマフォーマット
+  const [value, setValue] = useState<string>(
+    initialValue > 0 ? formatNumber(String(initialValue)) : ''
+  );
   const [error, setError] = useState<string>('');
 
   const validateInput = (input: string): { isValid: boolean; value?: number; error?: string } => {
+    // カンマを除去した値で検証
+    const cleanedInput = input.replace(/,/g, '');
+
     // 空欄チェック
-    if (input.trim() === '') {
+    if (cleanedInput.trim() === '') {
       return { isValid: false, error: '金額を入力してください' };
     }
 
     // 数値チェック
-    const numValue = Number(input);
+    const numValue = Number(cleanedInput);
     if (isNaN(numValue)) {
       return { isValid: false, error: '数値を入力してください' };
     }
@@ -66,8 +84,20 @@ export default function InputForm({
     onNext(result.value!);
   };
 
-  const handleChange = (newValue: string) => {
-    setValue(newValue);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+
+    // カンマを除去
+    const cleaned = input.replace(/,/g, '');
+
+    // 数値のみ許可(空文字は許可)
+    if (cleaned && !/^\d+$/.test(cleaned)) {
+      return;
+    }
+
+    // カンマフォーマットして表示
+    setValue(formatNumber(cleaned));
+
     if (error) {
       setError(''); // エラー状態をクリア
     }
@@ -81,14 +111,14 @@ export default function InputForm({
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
           <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-            月額金額（円）
+            月額金額(円)
           </label>
           <input
             id="amount"
             type="text"
             inputMode="numeric"
             value={value}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={handleChange}
             placeholder={placeholder}
             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
               error

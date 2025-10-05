@@ -58,3 +58,28 @@ export interface Advice {
   action: string;           // 具体的なアクション
   impact: string;           // 期待される効果
 }
+
+/**
+ * 経済的自由までの道のり型定義
+ */
+export interface TimeToFreedom {
+  route1: {
+    // 受動収入ルート
+    achievable: boolean;
+    years: number;
+    months: number;
+    currentPassiveIncome: number;
+    requiredPassiveIncome: number;
+    message: string;
+  };
+  route2: {
+    // 資産運用ルート
+    achievable: boolean;
+    years: number;
+    months: number;
+    currentAsset: number;
+    requiredAsset: number;
+    message: string;
+  };
+  fasterRoute: 1 | 2 | null; // どちらが早いか
+}

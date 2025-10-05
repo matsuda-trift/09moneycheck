@@ -48,7 +48,7 @@ export default function LaborIncomePage() {
         <InputForm
           title="労働収入"
           description="給料や事業収入など、自分が働いて得ている収入を入力してください。複数の収入源がある場合は合計額を入力してください。"
-          placeholder="例: 250000"
+          placeholder="例: 100,000"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

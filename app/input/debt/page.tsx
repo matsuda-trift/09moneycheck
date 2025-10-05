@@ -48,7 +48,7 @@ export default function DebtPage() {
         <InputForm
           title="負債"
           description="住宅ローン、自動車ローン、奨学金、クレジットカードの残債など、返済が必要な借金の総額を入力してください。"
-          placeholder="例: 500000"
+          placeholder="例: 0"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

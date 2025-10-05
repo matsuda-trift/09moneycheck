@@ -5,15 +5,18 @@
 
 import Stripe from 'stripe';
 
-export function getStripe(): Stripe {
-  const secretKey = process.env.STRIPE_SECRET_KEY;
+export function getStripe(secretKey?: string): Stripe {
+  // Cloudflare Workers環境ではランタイムで渡される
+  const key = secretKey || process.env.STRIPE_SECRET_KEY;
 
-  if (!secretKey) {
+  if (!key) {
     throw new Error('STRIPE_SECRET_KEY is not set');
   }
 
-  return new Stripe(secretKey, {
+  return new Stripe(key, {
     apiVersion: '2025-09-30.clover',
     typescript: true,
+    // Cloudflare Workers環境ではfetchベースのHTTPクライアントを使用
+    httpClient: Stripe.createFetchHttpClient(),
   });
 }

@@ -47,7 +47,7 @@ export default function WastePage() {
         <InputForm
           title="無駄遣い"
           description="娯楽費、外食、衝動買い、趣味など、計画外の支出や贅沢品を入力してください。心の健康のための支出も含めてOKです。"
-          placeholder="例: 30000"
+          placeholder="例: 30,000"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

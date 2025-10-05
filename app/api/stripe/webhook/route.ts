@@ -4,6 +4,7 @@
 // 関連: lib/stripe.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getStripe } from '@/lib/stripe';
 import Stripe from 'stripe';
 
@@ -18,7 +19,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  // 環境変数の取得（Cloudflare/ローカル対応）
+  let webhookSecret: string | undefined;
+  let secretKey: string | undefined;
+
+  const isCloudflare = process.env.NODE_ENV === 'production';
+
+  if (isCloudflare) {
+    const { env } = getCloudflareContext();
+    const envVars = env as unknown as Record<string, unknown>;
+    webhookSecret = envVars.STRIPE_WEBHOOK_SECRET as string;
+    secretKey = envVars.STRIPE_SECRET_KEY as string;
+  } else {
+    webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    secretKey = process.env.STRIPE_SECRET_KEY;
+  }
 
   if (!webhookSecret) {
     console.error('STRIPE_WEBHOOK_SECRET is not set');
@@ -28,10 +43,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (!secretKey) {
+    console.error('STRIPE_SECRET_KEY is not set');
+    return NextResponse.json(
+      { error: 'Stripe secret key not configured' },
+      { status: 500 }
+    );
+  }
+
   let event: Stripe.Event;
 
   try {
-    const stripe = getStripe();
+    const stripe = getStripe(secretKey);
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err);

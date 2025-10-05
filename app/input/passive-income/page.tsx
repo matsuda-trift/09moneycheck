@@ -48,7 +48,7 @@ export default function PassiveIncomePage() {
         <InputForm
           title="受動収入"
           description="不動産収入、配当金、利息収入など、働かなくても得られる収入を入力してください。現在ない場合は0円でOKです。"
-          placeholder="例: 30000"
+          placeholder="例: 0"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

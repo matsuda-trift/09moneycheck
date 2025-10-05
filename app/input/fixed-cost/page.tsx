@@ -48,7 +48,7 @@ export default function FixedCostPage() {
         <InputForm
           title="固定費"
           description="家賃、保険料、通信費、光熱費、サブスクなど、毎月必ず発生する支出を入力してください。変動が大きい項目は平均額でOKです。"
-          placeholder="例: 150000"
+          placeholder="例: 50,000"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

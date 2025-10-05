@@ -47,7 +47,7 @@ export default function SelfInvestmentPage() {
         <InputForm
           title="自己投資"
           description="書籍、オンライン講座、資格取得、ジム、健康など、将来の収入アップやスキル向上につながる支出を入力してください。"
-          placeholder="例: 20000"
+          placeholder="例: 10,000"
           initialValue={initialValue}
           onNext={handleNext}
           onBack={handleBack}

@@ -8,14 +8,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getData } from '@/lib/sessionStorage';
-import { diagnose } from '@/lib/diagnose';
+import { diagnose, calculateTimeToFreedom } from '@/lib/diagnose';
 import { generateAdvice, groupAdviceByDifficulty } from '@/lib/advice';
-import { DiagnoseResult, MoneyCheckData, Advice } from '@/types';
+import { DiagnoseResult, MoneyCheckData, TimeToFreedom } from '@/types';
+import { RatioCard, AdviceCard } from '@/components/PremiumCards';
 
 export default function PremiumPage() {
   const router = useRouter();
   const [data, setData] = useState<MoneyCheckData | null>(null);
   const [result, setResult] = useState<DiagnoseResult | null>(null);
+  const [timeToFreedom, setTimeToFreedom] = useState<TimeToFreedom | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -30,8 +32,10 @@ export default function PremiumPage() {
 
     const inputData = getData();
     const diagnoseResult = diagnose(inputData);
+    const freedomData = calculateTimeToFreedom(inputData);
     setData(inputData);
     setResult(diagnoseResult);
+    setTimeToFreedom(freedomData);
     setIsLoaded(true);
   }, [router]);
 
@@ -157,6 +161,91 @@ export default function PremiumPage() {
           )}
         </div>
 
+        {/* 経済的自由への道（プレミアム版） */}
+        {timeToFreedom && (
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              💰 経済的自由への具体的ロードマップ
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* 道1: 受動収入ルート */}
+              <div className="bg-white rounded-lg p-6 border-2 border-blue-300">
+                <h3 className="text-lg font-bold text-blue-900 mb-4">
+                  道1: 受動収入を増やす
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700 mb-4">
+                  <p>現在の受動収入: <span className="font-semibold">{timeToFreedom.route1.currentPassiveIncome.toLocaleString()}円/月</span></p>
+                  <p>必要な受動収入: <span className="font-semibold">{timeToFreedom.route1.requiredPassiveIncome.toLocaleString()}円/月</span></p>
+                  <p className="text-lg font-bold text-blue-900">
+                    {timeToFreedom.route1.message}
+                  </p>
+                </div>
+                {timeToFreedom.route1.achievable && timeToFreedom.route1.currentPassiveIncome < timeToFreedom.route1.requiredPassiveIncome && (
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-bold text-blue-900 mb-2">【今すぐできること】</h4>
+                    <ul className="space-y-1 text-xs text-gray-700">
+                      <li>• スキルを活かした副業開始（ライティング、デザイン等）</li>
+                      <li>• 不用品販売で小さく始める</li>
+                      <li>• 本業のスキルアップで昇給を目指す</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* 道2: 資産運用ルート */}
+              <div className="bg-white rounded-lg p-6 border-2 border-purple-300">
+                <h3 className="text-lg font-bold text-purple-900 mb-4">
+                  道2: 資産を貯める（年利5%想定）
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700 mb-4">
+                  <p>現在の資産: <span className="font-semibold">{timeToFreedom.route2.currentAsset.toLocaleString()}円</span></p>
+                  <p>必要な資産: <span className="font-semibold">{timeToFreedom.route2.requiredAsset.toLocaleString()}円</span></p>
+                  <p className="text-lg font-bold text-purple-900">
+                    {timeToFreedom.route2.message}
+                  </p>
+                </div>
+                {timeToFreedom.route2.achievable && (timeToFreedom.route2.years > 0 || timeToFreedom.route2.months > 0) && (
+                  <div className="mt-4 p-4 bg-purple-50 rounded-lg">
+                    <h4 className="font-bold text-purple-900 mb-2">【達成のために】</h4>
+                    <ul className="space-y-1 text-xs text-gray-700">
+                      <li>• 固定費削減で貯蓄額を増やす</li>
+                      <li>• 収入アップに集中投資する</li>
+                      <li>• 先取り貯蓄の仕組み化</li>
+                    </ul>
+                  </div>
+                )}
+                {!timeToFreedom.route2.achievable && (
+                  <div className="mt-4 p-4 bg-red-50 rounded-lg">
+                    <h4 className="font-bold text-red-900 mb-2">【まず収支改善を】</h4>
+                    <ul className="space-y-1 text-xs text-gray-700">
+                      <li>• 固定費を見直して支出削減</li>
+                      <li>• 収入を増やす行動を開始</li>
+                      <li>• 無駄遣いの優先順位を見直す</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {timeToFreedom.fasterRoute && (
+              <div className="bg-white rounded-lg p-4 border-2 border-green-300 mb-4">
+                <p className="text-sm font-bold text-green-900">
+                  🎯 おすすめルート: 道{timeToFreedom.fasterRoute}
+                  {timeToFreedom.fasterRoute === 1 ? '（受動収入）' : '（資産運用）'}
+                </p>
+              </div>
+            )}
+
+            <div className="bg-white rounded-lg p-4 border border-gray-300">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                ※ 「年利5%で運用」は一般的な試算例であり、特定の投資方法を推奨するものではありません。
+                実際の達成期間は個人の状況により異なります。
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* メッセージ */}
         <div className="bg-blue-50 rounded-lg p-6 mb-6">
           <p className="text-sm text-gray-700 leading-relaxed">
@@ -179,43 +268,3 @@ export default function PremiumPage() {
   );
 }
 
-function RatioCard({
-  label,
-  value,
-  good,
-}: {
-  label: string;
-  value: number;
-  good: boolean;
-}) {
-  return (
-    <div className="border rounded-lg p-4">
-      <div className="text-sm text-gray-600 mb-1">{label}</div>
-      <div
-        className={`text-2xl font-bold ${good ? 'text-green-600' : 'text-orange-600'}`}
-      >
-        {(value * 100).toFixed(1)}%
-      </div>
-      <div className="text-xs text-gray-500 mt-1">
-        {good ? '✓ 良好' : '改善の余地あり'}
-      </div>
-    </div>
-  );
-}
-
-function AdviceCard({ advice }: { advice: Advice }) {
-  return (
-    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 text-2xl">💡</div>
-        <div className="flex-1">
-          <div className="font-medium text-gray-900 mb-1">{advice.action}</div>
-          <div className="text-sm text-gray-600">{advice.impact}</div>
-          <div className="text-xs text-gray-500 mt-1">
-            カテゴリ: {advice.category}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
