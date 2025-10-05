@@ -35,10 +35,6 @@ export default function InputForm({
     return Number(cleaned).toLocaleString('ja-JP');
   };
 
-  // カンマを除去して数値に変換
-  const parseNumber = (formattedStr: string): number => {
-    return Number(formattedStr.replace(/,/g, ''));
-  };
 
   // 初期値をカンマフォーマット
   const [value, setValue] = useState<string>(

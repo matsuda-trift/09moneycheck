@@ -180,8 +180,8 @@ export function calculateTimeToFreedom(data: MoneyCheckData): TimeToFreedom {
   const requiredPassiveIncome = monthlyLivingCost;
   const passiveIncomeGap = requiredPassiveIncome - data.passiveIncome;
 
-  let route1Years = 0;
-  let route1Months = 0;
+  const route1Years = 0;
+  const route1Months = 0;
   let route1Achievable = false;
   let route1Message = '';
 

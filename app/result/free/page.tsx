@@ -9,12 +9,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getData } from '@/lib/sessionStorage';
 import { diagnose, calculateTimeToFreedom } from '@/lib/diagnose';
-import { DiagnoseResult, MoneyCheckData, TimeToFreedom } from '@/types';
+import { DiagnoseResult, TimeToFreedom } from '@/types';
 
 export default function FreeResultPage() {
   const router = useRouter();
   const [result, setResult] = useState<DiagnoseResult | null>(null);
-  const [data, setData] = useState<MoneyCheckData | null>(null);
   const [timeToFreedom, setTimeToFreedom] = useState<TimeToFreedom | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -22,7 +21,6 @@ export default function FreeResultPage() {
     const inputData = getData();
     const diagnoseResult = diagnose(inputData);
     const freedomData = calculateTimeToFreedom(inputData);
-    setData(inputData);
     setResult(diagnoseResult);
     setTimeToFreedom(freedomData);
     setIsLoaded(true);
