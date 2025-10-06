@@ -38,14 +38,7 @@ export async function POST() {
       payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'jpy',
-            product_data: {
-              name: 'MoneyCheck プレミアム診断',
-              description: '詳細分析とカスタマイズアドバイス',
-            },
-            unit_amount: 500,
-          },
+          price: 'price_1SF7IMCg82m9U8Scqk5hKuIr',
           quantity: 1,
         },
       ],
